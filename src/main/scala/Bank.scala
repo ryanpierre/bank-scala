@@ -1,4 +1,2 @@
 
-object Bank extends App {
-    
-}
+object Bank extends App {}
