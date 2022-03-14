@@ -1,7 +1,7 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{Account, Transaction, BaseTransactionService, TransactionService}
+import main.{Account, BaseTransaction, BaseTransactionService}
 
 class AccountTest extends AnyWordSpec with Matchers with MockFactory {
   "An Account" should {
@@ -9,7 +9,7 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
       "stores a new transaction" in {
         // Set up mocks
         val mockTransactionService = mock[BaseTransactionService]
-        val mockTransaction = mock[Transaction]
+        val mockTransaction = mock[BaseTransaction]
         (mockTransactionService.createTransaction _).expects(100).returning(mockTransaction)
 
         // Set up test

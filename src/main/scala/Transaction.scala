@@ -1,3 +1,7 @@
 package main 
 
-class Transaction(val amount: Double)
+trait BaseTransaction {
+  def amount: Double
+}
+
+class Transaction(val amount: Double) extends BaseTransaction
