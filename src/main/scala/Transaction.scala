@@ -1,3 +1,3 @@
 package main 
 
-class Transaction(val amount: Double) 
+class Transaction(val amount: Double)

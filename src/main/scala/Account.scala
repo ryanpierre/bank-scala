@@ -1,9 +1,9 @@
 package main
 
-class Account() {
+class Account(val transactionService: TransactionService = new TransactionService()) {
   var transactions: Seq[Transaction] = Seq()
 
   def deposit(amount: Double): Unit = {
-    transactions = transactions :+ new Transaction(amount)
+    transactions = transactions :+ transactionService.createTransaction(amount)
   }
 }
