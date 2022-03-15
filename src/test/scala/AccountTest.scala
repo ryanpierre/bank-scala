@@ -10,7 +10,9 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
         // Set up mocks
         val mockTransactionService = mock[BaseTransactionService]
         val mockTransaction = mock[BaseTransaction]
-        (mockTransactionService.createTransaction _).expects(100).returning(mockTransaction)
+        (mockTransactionService.createTransaction _)
+          .expects(100)
+          .returning(mockTransaction)
 
         // Set up test
         val subject = new Account(mockTransactionService);
