@@ -2,13 +2,29 @@ package main
 
 import java.time.Clock
 
+object Util {
+  def mapAndFold[A, B](
+      collection: Seq[A],
+      initialValue: B,
+      mapFn: (A) => B,
+      foldFn: (B, B) => B
+  ) = {
+    collection.map(mapFn).foldLeft(initialValue)(foldFn)
+  }
+}
+
 class Account(
     var transactions: Seq[BaseTransaction] = Seq(),
     val transactionService: BaseTransactionService = new TransactionService()
 ) {
 
   def balance(): Double = {
-    transactions.map(_.amount).foldLeft(0.0)(_ + _)
+    Util.mapAndFold[BaseTransaction, Double](
+      transactions,
+      0.0,
+      _.amount,
+      _ + _
+    )
   }
 
   def deposit(amount: Double): Unit = {
@@ -16,7 +32,7 @@ class Account(
   }
 
   def withdraw(amount: Double): Unit = {
-    if(amount > balance()) {
+    if (amount > balance()) {
       throw new RuntimeException("Not enough money!")
     }
 
