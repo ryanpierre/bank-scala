@@ -61,14 +61,13 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
     }
     "calculate balance" which {
       "sums the net amount of all transactions" in {
-        class MockTransaction(
-            val amount: Double,
-            val date: Instant = Instant.now()
-        ) extends TransactionBase
+        val mockTransaction1 = mock[TransactionBase]
+        val mockTransaction2 = mock[TransactionBase]
+        val mockTransaction3 = mock[TransactionBase]
 
-        val mockTransaction1 = new MockTransaction(100.5)
-        val mockTransaction2 = new MockTransaction(-50.5)
-        val mockTransaction3 = new MockTransaction(200)
+        (() => mockTransaction1.amount).expects().returning(100.5)
+        (() => mockTransaction2.amount).expects().returning(-50.5)
+        (() => mockTransaction3.amount).expects().returning(200)
 
         val subject =
           new Account(
