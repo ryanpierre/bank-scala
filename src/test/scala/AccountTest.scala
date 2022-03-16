@@ -7,12 +7,12 @@ import java.time.Instant
 
 class AccountTest extends AnyWordSpec with Matchers with MockFactory {
   "An Account" should {
-    "accepts a deposit" which {
+    "accept a deposit" which {
       "stores a new transaction" in {
         val mockTransactionFactory = mock[TransactionFactory]
-        val mockDeposit = mock[TransactionBase]
+        val mockDeposit = mock[Transaction]
 
-        (mockTransactionFactory.create: (Double) => TransactionBase)
+        (mockTransactionFactory.create: (Double) => Transaction)
           .expects(100)
           .returning(mockDeposit)
 
@@ -32,10 +32,9 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
     "accept a withdrawal" which {
       "stores a new transaction" in {
         val mockTransactionFactory = mock[TransactionFactory]
-        val mockDeposit = mock[TransactionBase]
-        val mockWithdrawal = mock[TransactionBase]
+        val mockWithdrawal = mock[Transaction]
 
-        (mockTransactionFactory.create: (Double) => TransactionBase)
+        (mockTransactionFactory.create: (Double) => Transaction)
           .expects(-50)
           .returning(mockWithdrawal)
 

@@ -12,5 +12,5 @@ class Transaction(
     val amount: Double,
     private val clock: Clock = Clock.systemUTC()
 ) extends TransactionBase {
-  val date = Instant.now(clock)
+  def date = Instant.now(clock)
 }

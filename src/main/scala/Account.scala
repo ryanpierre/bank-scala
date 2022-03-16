@@ -16,7 +16,7 @@ class Account(
       throw new IllegalArgumentException("Amount must be greater than 0")
     }
 
-    addTransaction(amount)
+    addNewTransaction(amount)
   }
 
   def withdraw(amount: Double): Unit = {
@@ -28,10 +28,10 @@ class Account(
       throw new RuntimeException("Not enough money!")
     }
 
-    addTransaction(-1 * amount)
+    addNewTransaction(-1 * amount)
   }
 
-  private def addTransaction(amount: Double): Unit = {
+  private def addNewTransaction(amount: Double): Unit = {
     transactions += transactionFactory.create(amount)
   }
 }
