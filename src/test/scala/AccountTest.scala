@@ -65,9 +65,9 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
         val mockTransaction2 = mock[TransactionBase]
         val mockTransaction3 = mock[TransactionBase]
 
-        (() => mockTransaction1.amount).expects().returning(100.5)
-        (() => mockTransaction2.amount).expects().returning(-50.5)
-        (() => mockTransaction3.amount).expects().returning(200)
+        (() => mockTransaction1.amount).stubs().returning(100.5)
+        (() => mockTransaction2.amount).stubs().returning(-50.5)
+        (() => mockTransaction3.amount).stubs().returning(200)
 
         val subject =
           new Account(
