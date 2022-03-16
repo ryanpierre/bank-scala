@@ -17,6 +17,10 @@ class TransactionHistoryItem(
 ) extends StatementData
 
 class Statement(val history: Array[StatementData]) {
+  private val formatter = DateTimeFormatter
+    .ofPattern("dd/MM/yyyy HH:mm")
+    .withZone(ZoneId.of("UTC"));
+
   private def printHeader(
       dateHeader: String,
       amountHeader: String,
@@ -24,6 +28,7 @@ class Statement(val history: Array[StatementData]) {
   ): String = {
     return f"$dateHeader%-20s|$amountHeader%-12s|$balanceHeader%-12s"
   }
+
   private def sortHistoryByDate(
       t1: StatementData,
       t2: StatementData
@@ -31,15 +36,8 @@ class Statement(val history: Array[StatementData]) {
     return t1.date.isBefore(t2.date)
   }
 
-  private def formatInstant(instant: Instant): String = {
-    val formatter = DateTimeFormatter
-      .ofPattern("dd/MM/yyyy HH:mm")
-      .withZone(ZoneId.of("UTC"));
-    return formatter.format(instant)
-  }
-
   private def printLine(item: StatementData): String = {
-    return f"|${formatInstant(item.date)}%-20s|${item.amount}%12s|${item.balance}%12s"
+    return f"|${formatter.format(item.date)}%-20s|${item.amount}%12s|${item.balance}%12s"
   }
 
   def print(): String = {
