@@ -1,10 +1,11 @@
 package main
 
 import java.time.Clock
+import scala.collection.mutable.ArrayBuffer
 
 class Account(
-    var transactions: Seq[BaseTransaction] = Seq(),
-    val transactionService: BaseTransactionService = new TransactionService()
+    val transactions: ArrayBuffer[BaseTransaction] = new ArrayBuffer(),
+    val transactionFactory: BaseTransactionFactory = new TransactionFactory()
 ) {
 
   def balance(): Double = {
@@ -16,7 +17,7 @@ class Account(
   }
 
   def withdraw(amount: Double): Unit = {
-    if(amount > balance()) {
+    if (amount > balance()) {
       throw new RuntimeException("Not enough money!")
     }
 
@@ -24,6 +25,6 @@ class Account(
   }
 
   private def addTransaction(amount: Double): Unit = {
-    transactions = transactions :+ transactionService.createTransaction(amount)
+    transactions += transactionFactory.create(amount)
   }
 }
