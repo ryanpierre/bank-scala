@@ -1,11 +1,16 @@
 package main
 
 import java.time.LocalDateTime
-import java.time.Instant
+import java.time.{Instant, Clock}
 
-trait BaseTransaction {
+trait TransactionBase {
   def amount: Double
   def date: Instant
 }
 
-class Transaction(val amount: Double, val date: Instant) extends BaseTransaction
+class Transaction(
+    val amount: Double,
+    private val clock: Clock = Clock.systemUTC()
+) extends TransactionBase {
+  val date = Instant.now(clock)
+}

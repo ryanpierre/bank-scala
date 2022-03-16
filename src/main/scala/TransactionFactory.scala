@@ -2,18 +2,12 @@ package main
 
 import java.time.{Instant, Clock}
 
-trait BaseTransactionFactory {
-  def clock: Clock
-  def create(amount: Double): BaseTransaction
-}
+class TransactionFactory() {
+  def create(amount: Double): TransactionBase = {
+    return new Transaction(amount)
+  }
 
-class TransactionFactory(val clock: Clock = Clock.systemUTC())
-    extends BaseTransactionFactory {
-  def create(amount: Double): BaseTransaction = {
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Amount must be greater than 0")
-    }
-
-    return new Transaction(amount, Instant.now(clock))
+  def create(amount: Double, clock: Clock): TransactionBase = {
+    return new Transaction(amount, clock)
   }
 }
