@@ -1,7 +1,7 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{Account, Transaction, TransactionBase, TransactionFactory}
+import main.{Account, Transaction, TransactionBase, TransactionFactoryBase}
 import scala.collection.mutable.ArrayBuffer
 import java.time.Instant
 
@@ -9,10 +9,10 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
   "An Account" should {
     "accept a deposit" which {
       "stores a new transaction" in {
-        val mockTransactionFactory = mock[TransactionFactory]
-        val mockDeposit = mock[Transaction]
+        val mockTransactionFactory = mock[TransactionFactoryBase]
+        val mockDeposit = mock[TransactionBase]
 
-        (mockTransactionFactory.create: (Double) => Transaction)
+        (mockTransactionFactory.create: (Double) => TransactionBase)
           .expects(100)
           .returning(mockDeposit)
 
@@ -31,10 +31,10 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
     }
     "accept a withdrawal" which {
       "stores a new transaction" in {
-        val mockTransactionFactory = mock[TransactionFactory]
-        val mockWithdrawal = mock[Transaction]
+        val mockTransactionFactory = mock[TransactionFactoryBase]
+        val mockWithdrawal = mock[TransactionBase]
 
-        (mockTransactionFactory.create: (Double) => Transaction)
+        (mockTransactionFactory.create: (Double) => TransactionBase)
           .expects(-50)
           .returning(mockWithdrawal)
 

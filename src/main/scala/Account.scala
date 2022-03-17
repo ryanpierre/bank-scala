@@ -5,7 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class Account(
     val transactions: ArrayBuffer[TransactionBase] = new ArrayBuffer(),
-    val transactionFactory: TransactionFactory = new TransactionFactory()
+    val transactionFactory: TransactionFactoryBase = TransactionFactory
 ) {
   def balance(): Double = {
     transactions.map(_.amount).foldLeft(0.0)(_ + _)
