@@ -1,7 +1,16 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{Account, Transaction, TransactionBase, TransactionFactoryBase}
+import main.{
+  Account,
+  Transaction,
+  TransactionBase,
+  TransactionFactoryBase,
+  AccountUtilBase,
+  TransactionType,
+  DEPOSIT,
+  WITHDRAWAL
+}
 import scala.collection.mutable.ArrayBuffer
 import java.time.Instant
 
@@ -10,13 +19,21 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
     "accept a deposit" which {
       "stores a new transaction" in {
         val mockTransactionFactory = mock[TransactionFactoryBase]
+        val mockAccountUtil = mock[AccountUtilBase]
         val mockDeposit = mock[TransactionBase]
 
-        (mockTransactionFactory.create: (Double) => TransactionBase)
-          .expects(100)
+        (mockTransactionFactory.create: (
+            Double,
+            TransactionType
+        ) => TransactionBase)
+          .expects(100, DEPOSIT)
           .returning(mockDeposit)
 
-        val subject = new Account(new ArrayBuffer(), mockTransactionFactory);
+        val subject = new Account(
+          new ArrayBuffer(),
+          mockAccountUtil,
+          mockTransactionFactory
+        );
 
         subject.deposit(100)
         subject.transactions should have length 1
@@ -31,17 +48,28 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
     }
     "accept a withdrawal" which {
       "stores a new transaction" in {
+        val mockAccountUtil = mock[AccountUtilBase]
         val mockTransactionFactory = mock[TransactionFactoryBase]
         val mockWithdrawal = mock[TransactionBase]
+        val mockTransactions = new ArrayBuffer[TransactionBase]()
 
-        (mockTransactionFactory.create: (Double) => TransactionBase)
-          .expects(-50)
+        (mockAccountUtil.balance _)
+          .expects(mockTransactions)
+          .returning(100)
+
+        (mockTransactionFactory.create: (
+            Double,
+            TransactionType
+        ) => TransactionBase)
+          .expects(50, WITHDRAWAL)
           .returning(mockWithdrawal)
 
         val subject =
-          new Account(new ArrayBuffer(), mockTransactionFactory) {
-            override def balance(): Double = 100.0
-          };
+          new Account(
+            mockTransactions,
+            mockAccountUtil,
+            mockTransactionFactory
+          )
 
         subject.withdraw(50)
         subject.transactions should have length 1
@@ -57,26 +85,6 @@ class AccountTest extends AnyWordSpec with Matchers with MockFactory {
 
         an[IllegalArgumentException] should be thrownBy subject
           .withdraw(-50)
-      }
-    }
-    "calculate balance" which {
-      "sums the net amount of all transactions" in {
-        val mockTransaction1 = mock[TransactionBase]
-        val mockTransaction2 = mock[TransactionBase]
-        val mockTransaction3 = mock[TransactionBase]
-
-        (() => mockTransaction1.amount).stubs().returning(100.5)
-        (() => mockTransaction2.amount).stubs().returning(-50.5)
-        (() => mockTransaction3.amount).stubs().returning(200)
-
-        val subject =
-          new Account(
-            new ArrayBuffer(3).appendAll(
-              Iterable(mockTransaction1, mockTransaction2, mockTransaction3)
-            )
-          )
-
-        subject.balance() shouldEqual 250
       }
     }
   }

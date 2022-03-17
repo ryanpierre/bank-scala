@@ -1,7 +1,7 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{TransactionBase, TransactionFactory}
+import main.{TransactionBase, TransactionFactory, DEPOSIT, WITHDRAWAL}
 import java.time.{Clock, Instant, ZoneId}
 
 class TransactionFactoryTest
@@ -11,25 +11,17 @@ class TransactionFactoryTest
   "A TransactionFactory" should {
     "create a transaction" which {
       "returns a transaction to the caller" in {
-        val transaction = TransactionFactory.create(100)
+        val transaction = TransactionFactory.create(100, DEPOSIT)
 
         transaction shouldBe a[TransactionBase]
         transaction.amount shouldBe 100
       }
-      "uses the provided clock if one is provided" in {
-        val transaction = TransactionFactory.create(
-          100,
-          Clock.fixed(
-            Instant.parse("2022-03-13T16:45:00.00Z"),
-            ZoneId.of("UTC")
-          )
-        )
+      "respects withdrawal or deposit before creation" in {
+        val transaction = TransactionFactory.create(100, WITHDRAWAL)
 
         transaction shouldBe a[TransactionBase]
-        transaction.amount shouldBe 100
-        transaction.date.toString() shouldBe "2022-03-13T16:45:00Z"
+        transaction.amount shouldBe -100
       }
-
     }
   }
 }
