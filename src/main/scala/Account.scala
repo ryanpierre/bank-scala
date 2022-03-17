@@ -2,29 +2,20 @@ package main
 
 import java.time.Clock
 import scala.collection.mutable.ArrayBuffer
+import java.util.UUID.randomUUID
 
+trait AccountBase {
+  def transactions: ArrayBuffer[TransactionBase]
+  def canonicalId: String
+}
+/*
+  Account
+
+  The Account class should handle the storage of transactions and contain an identifier
+ */
 class Account(
     val transactions: ArrayBuffer[TransactionBase] = new ArrayBuffer(),
-    val accountUtil: AccountUtilBase = AccountUtil,
-    val transactionFactory: TransactionFactoryBase = TransactionFactory
-) {
-  def deposit(amount: Double): Unit = {
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Must enter an amount greater than 0")
-    }
-
-    transactions += transactionFactory.create(amount, DEPOSIT)
-  }
-
-  def withdraw(amount: Double): Unit = {
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Must enter an amount greater than 0")
-    }
-
-    if (amount > accountUtil.balance(transactions)) {
-      throw new RuntimeException("Not enough money!")
-    }
-
-    transactions += transactionFactory.create(amount, WITHDRAWAL)
-  }
+    private val uuidGenerator: () => String = () => randomUUID().toString
+) extends AccountBase {
+  val canonicalId = uuidGenerator()
 }
