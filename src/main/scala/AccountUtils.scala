@@ -31,9 +31,9 @@ object AccountUtils extends AccountUtilsBase {
       account: AccountBase
   ): ArrayBuffer[TransactionHistoryItemBase] = {
     account.transactions
-      .sortWith(AccountUtils.sortHistoryByDate)
+      .sortWith(sortHistoryByDate)
       .foldLeft(new ArrayBuffer[TransactionHistoryItemBase]())(
-        AccountUtils.toHistoryItems
+        toHistoryItems
       )
   }
 }
