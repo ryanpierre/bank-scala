@@ -11,7 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  */
 class BankUI(
     val accounts: ArrayBuffer[AccountBase] = new ArrayBuffer(),
-    val transactionFactory: TransactionFactoryBase = TransactionFactory
+    val transactionFactory: TransactionFactoryBase = TransactionFactory,
+    val accountUtils: AccountUtilsBase = AccountUtils,
+    val statementGenerator: StatementBase = Statement
 ) {
   def deposit(canonicalAccountId: String, amount: Double): Unit = {
     val account =
@@ -47,5 +49,17 @@ class BankUI(
     }
 
     account.get.transactions += transactionFactory.create(amount, WITHDRAWAL)
+  }
+
+  def printStatement(canonicalAccountId: String): String = {
+    val account =
+      accounts
+        .find(_.canonicalId == canonicalAccountId)
+
+    if (account.isEmpty) {
+      throw new IllegalArgumentException("Invalid account id")
+    }
+
+    statementGenerator.generate(accountUtils.getHistory(account.get))
   }
 }

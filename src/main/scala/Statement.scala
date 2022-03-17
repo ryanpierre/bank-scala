@@ -4,7 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
-trait StatementData {
+trait TransactionHistoryItemBase {
   def date: Instant
   def amount: Double
   def balance: Double
@@ -14,9 +14,13 @@ class TransactionHistoryItem(
     val date: Instant,
     val amount: Double,
     val balance: Double
-) extends StatementData
+) extends TransactionHistoryItemBase
 
-class Statement(val history: Array[StatementData]) {
+trait StatementBase {
+  def generate(history: ArrayBuffer[TransactionHistoryItemBase]): String
+}
+
+object Statement extends StatementBase {
   private val formatter = DateTimeFormatter
     .ofPattern("dd/MM/yyyy HH:mm")
     .withZone(ZoneId.of("UTC"));
@@ -29,21 +33,14 @@ class Statement(val history: Array[StatementData]) {
     return f"$dateHeader%-20s|$amountHeader%-12s|$balanceHeader%-12s"
   }
 
-  private def sortHistoryByDate(
-      t1: StatementData,
-      t2: StatementData
-  ): Boolean = {
-    return t1.date.isBefore(t2.date)
-  }
-
-  private def printLine(item: StatementData): String = {
+  private def printLine(item: TransactionHistoryItemBase): String = {
     return f"|${formatter.format(item.date)}%-20s|${item.amount}%12s|${item.balance}%12s"
   }
 
-  def print(): String = {
-    val sortedHistory = history.sortWith(sortHistoryByDate).map(printLine)
-
+  def generate(history: ArrayBuffer[TransactionHistoryItemBase]): String = {
     return f"""${printHeader("Date", "Amount", "Balance")}
-    ${sortedHistory.mkString("\n")}""".stripMargin
+    ${history
+      .map(printLine)
+      .mkString("\n")}""".stripMargin
   }
 }

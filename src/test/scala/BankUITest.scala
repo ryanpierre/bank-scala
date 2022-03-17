@@ -6,10 +6,14 @@ import main.{
   AccountBase,
   Transaction,
   TransactionBase,
+  TransactionFactory,
   TransactionFactoryBase,
   TransactionType,
+  AccountUtilsBase,
+  StatementBase,
   DEPOSIT,
   WITHDRAWAL,
+  TransactionHistoryItemBase,
   BankUI
 }
 import scala.collection.mutable.ArrayBuffer
@@ -164,6 +168,38 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
           .withdraw("12345-6789", 100)
 
         thrown.getMessage should equal("Not enough money!")
+      }
+    }
+    "print an account statement" which {
+      "generates historical balance data" in {
+        val mockDeposit = mock[TransactionBase]
+        var mockTransactions = ArrayBuffer(mockDeposit)
+        val mockAccount = mock[AccountBase]
+        val mockAccountUtils = mock[AccountUtilsBase]
+        val mockHistoryItem = mock[TransactionHistoryItemBase]
+        val mockHistory = ArrayBuffer(mockHistoryItem)
+        val mockStatement = mock[StatementBase]
+
+        (mockAccountUtils.getHistory _)
+          .expects(mockAccount)
+          .returning(mockHistory)
+
+        (mockStatement.generate _)
+          .expects(mockHistory)
+          .returning("I am a statement")
+
+        (() => mockAccount.canonicalId)
+          .expects()
+          .returning("12345-6789")
+
+        val subject = new BankUI(
+          new ArrayBuffer(1).addOne(mockAccount),
+          TransactionFactory,
+          mockAccountUtils,
+          mockStatement
+        )
+
+        subject.printStatement("12345-6789") shouldEqual "I am a statement"
       }
     }
   }
