@@ -175,6 +175,7 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
         val mockDeposit = mock[TransactionBase]
         var mockTransactions = ArrayBuffer(mockDeposit)
         val mockAccount = mock[AccountBase]
+        val mockTransactionFactory = mock[TransactionFactoryBase]
         val mockTransactionHistory = mock[TransactionHistoryBase]
         val mockHistoryItem = mock[TransactionHistoryItemBase]
         val mockHistory = ArrayBuffer(mockHistoryItem)
@@ -192,10 +193,9 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
           .expects()
           .returning("12345-6789")
 
-        // TODO: Mock transaction factory
         val subject = new BankUI(
           new ArrayBuffer(1).addOne(mockAccount),
-          TransactionFactory,
+          mockTransactionFactory,
           mockTransactionHistory,
           mockStatement
         )
