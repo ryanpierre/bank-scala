@@ -1,6 +1,7 @@
-package main
+package main.lib
 
 import scala.collection.mutable.ArrayBuffer
+import main.model.{AccountBase, TransactionBase}
 
 trait AccountUtilsBase {
   def getHistory(

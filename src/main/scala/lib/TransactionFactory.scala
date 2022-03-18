@@ -1,10 +1,13 @@
-package main
+package main.lib
 
 import java.time.{Instant, Clock}
-
-sealed trait TransactionType
-case object WITHDRAWAL extends TransactionType
-case object DEPOSIT extends TransactionType
+import main.model.{
+  TransactionType,
+  DEPOSIT,
+  WITHDRAWAL,
+  Transaction,
+  TransactionBase
+}
 
 trait TransactionFactoryBase {
   def create(amount: Double, trType: TransactionType): TransactionBase

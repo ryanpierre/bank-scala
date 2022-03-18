@@ -1,14 +1,18 @@
-package main
+package main.client
 
 import java.time.Clock
 import scala.collection.mutable.ArrayBuffer
+import main.lib.{
+  Statement,
+  AccountUtils,
+  AccountUtilsBase,
+  TransactionHistoryItemBase,
+  StatementBase,
+  TransactionFactory,
+  TransactionFactoryBase
+}
+import main.model.{AccountBase, DEPOSIT, WITHDRAWAL}
 
-/*
-  BankUI
-
-  The BankUI class should store accounts and handle user input to
-  control the various features of our bank
- */
 class BankUI(
     val accounts: ArrayBuffer[AccountBase] = new ArrayBuffer(),
     val transactionFactory: TransactionFactoryBase = TransactionFactory,

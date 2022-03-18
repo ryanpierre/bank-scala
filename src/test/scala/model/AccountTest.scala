@@ -1,6 +1,6 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import main.{Account}
+import main.model.Account
 import scala.collection.mutable.ArrayBuffer
 
 class AccountTest extends AnyWordSpec with Matchers {

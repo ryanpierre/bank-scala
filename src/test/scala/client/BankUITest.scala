@@ -1,20 +1,20 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{
-  Account,
-  AccountBase,
-  Transaction,
-  TransactionBase,
-  TransactionFactory,
-  TransactionFactoryBase,
-  TransactionType,
+import main.client.BankUI
+import main.lib.{
   AccountUtilsBase,
-  StatementBase,
-  DEPOSIT,
-  WITHDRAWAL,
   TransactionHistoryItemBase,
-  BankUI
+  StatementBase,
+  TransactionFactory,
+  TransactionFactoryBase
+}
+import main.model.{
+  AccountBase,
+  TransactionBase,
+  TransactionType,
+  DEPOSIT,
+  WITHDRAWAL
 }
 import scala.collection.mutable.ArrayBuffer
 import java.time.Instant
@@ -192,6 +192,7 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
           .expects()
           .returning("12345-6789")
 
+        // TODO: Mock transaction factory
         val subject = new BankUI(
           new ArrayBuffer(1).addOne(mockAccount),
           TransactionFactory,

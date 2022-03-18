@@ -1,7 +1,8 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{TransactionBase, TransactionFactory, DEPOSIT, WITHDRAWAL}
+import main.lib.{TransactionFactory}
+import main.model.{TransactionBase, DEPOSIT, WITHDRAWAL}
 import java.time.{Clock, Instant, ZoneId}
 
 class TransactionFactoryTest

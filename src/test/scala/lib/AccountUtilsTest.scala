@@ -1,11 +1,7 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import main.{
-  AccountUtils,
-  AccountBase,
-  TransactionBase,
-  TransactionHistoryItemBase
-}
+import main.lib.{AccountUtils, TransactionHistoryItemBase}
+import main.model.{AccountBase, TransactionBase}
 import scala.collection.mutable.ArrayBuffer
 import org.scalamock.scalatest.MockFactory
 import java.time.Instant

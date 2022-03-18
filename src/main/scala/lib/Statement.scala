@@ -1,4 +1,4 @@
-package main
+package main.lib
 
 import scala.collection.mutable.ArrayBuffer
 import java.time.{Instant, ZoneId}
