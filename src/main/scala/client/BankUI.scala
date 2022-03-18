@@ -7,15 +7,12 @@ import main.lib.{
   TransactionHistory,
   TransactionHistoryBase,
   TransactionHistoryItemBase,
-  StatementBase,
-  TransactionFactory,
-  TransactionFactoryBase
+  StatementBase
 }
-import main.model.{AccountBase, DEPOSIT, WITHDRAWAL}
+import main.model.{AccountBase, Transaction, DEPOSIT, WITHDRAWAL}
 
 class BankUI(
     val accounts: ArrayBuffer[AccountBase] = new ArrayBuffer(),
-    val transactionFactory: TransactionFactoryBase = TransactionFactory,
     val transactionHistory: TransactionHistoryBase = TransactionHistory,
     val statementGenerator: StatementBase = Statement
 ) {
@@ -32,7 +29,7 @@ class BankUI(
       throw new IllegalArgumentException("Invalid account id")
     }
 
-    account.get.transactions += transactionFactory.create(amount, DEPOSIT)
+    account.get.transactions += new Transaction(amount, DEPOSIT)
   }
 
   def withdraw(canonicalAccountId: String, amount: Double): Unit = {
@@ -52,7 +49,7 @@ class BankUI(
       throw new RuntimeException("Not enough money!")
     }
 
-    account.get.transactions += transactionFactory.create(amount, WITHDRAWAL)
+    account.get.transactions += new Transaction(amount, WITHDRAWAL)
   }
 
   def printStatement(canonicalAccountId: String): String = {

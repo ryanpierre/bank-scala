@@ -11,7 +11,7 @@ trait AccountBase {
 
 class Account(
     val transactions: ArrayBuffer[TransactionBase] = new ArrayBuffer(),
-    private val uuidGenerator: () => String = () => randomUUID().toString
+    private val _uuidGenerator: () => String = () => randomUUID().toString
 ) extends AccountBase {
-  val canonicalId = uuidGenerator()
+  val canonicalId = _uuidGenerator()
 }

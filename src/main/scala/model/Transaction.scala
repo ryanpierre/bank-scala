@@ -13,8 +13,13 @@ trait TransactionBase {
 }
 
 class Transaction(
-    val amount: Double,
-    private val clock: Clock = Clock.systemUTC()
+    private val _amount: Double,
+    private val _trType: TransactionType,
+    private val _clock: Clock = Clock.systemUTC()
 ) extends TransactionBase {
-  def date = Instant.now(clock)
+  def amount = _trType match {
+    case DEPOSIT    => _amount
+    case WITHDRAWAL => -1 * _amount
+  }
+  def date = Instant.now(_clock)
 }

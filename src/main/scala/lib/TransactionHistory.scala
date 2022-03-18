@@ -1,8 +1,8 @@
 package main.lib
 
 import scala.collection.mutable.ArrayBuffer
-import java.time.Instant
-import main.model.{AccountBase, TransactionBase}
+import java.time.{Instant, Clock}
+import main.model.{AccountBase, TransactionBase, TransactionType}
 
 trait TransactionHistoryItemBase {
   def date: Instant

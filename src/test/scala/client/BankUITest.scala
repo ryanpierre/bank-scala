@@ -5,9 +5,7 @@ import main.client.BankUI
 import main.lib.{
   TransactionHistoryBase,
   TransactionHistoryItemBase,
-  StatementBase,
-  TransactionFactory,
-  TransactionFactoryBase
+  StatementBase
 }
 import main.model.{
   AccountBase,
@@ -24,7 +22,6 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
     "accept a deposit" which {
       "stores a new transaction on the specified account" in {
         val mockAccount = mock[AccountBase]
-        val mockTransactionFactory = mock[TransactionFactoryBase]
         val mockDeposit = mock[TransactionBase]
         var mockTransactions = new ArrayBuffer[TransactionBase]()
 
@@ -36,16 +33,8 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
           .stubs()
           .returning(mockTransactions)
 
-        (mockTransactionFactory.create: (
-            Double,
-            TransactionType
-        ) => TransactionBase)
-          .expects(100, DEPOSIT)
-          .returning(mockDeposit)
-
         val subject = new BankUI(
-          new ArrayBuffer(1).addOne(mockAccount),
-          mockTransactionFactory
+          new ArrayBuffer(1).addOne(mockAccount)
         ).deposit("12345-6789", 100)
 
         mockAccount.transactions should have length 1
@@ -84,7 +73,6 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
     "accept a withdrawal" which {
       "stores a new transaction on the specified account" in {
         val mockAccount = mock[AccountBase]
-        val mockTransactionFactory = mock[TransactionFactoryBase]
         val mockDeposit = mock[TransactionBase]
         val mockWithdrawal = mock[TransactionBase]
         var mockTransactions = ArrayBuffer(mockDeposit)
@@ -101,16 +89,8 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
           .stubs()
           .returning(mockTransactions)
 
-        (mockTransactionFactory.create: (
-            Double,
-            TransactionType
-        ) => TransactionBase)
-          .expects(50, WITHDRAWAL)
-          .returning(mockWithdrawal)
-
         val subject = new BankUI(
-          new ArrayBuffer(1).addOne(mockAccount),
-          mockTransactionFactory
+          new ArrayBuffer(1).addOne(mockAccount)
         ).withdraw("12345-6789", 50)
 
         mockAccount.transactions should have length 2
@@ -175,7 +155,6 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
         val mockDeposit = mock[TransactionBase]
         var mockTransactions = ArrayBuffer(mockDeposit)
         val mockAccount = mock[AccountBase]
-        val mockTransactionFactory = mock[TransactionFactoryBase]
         val mockTransactionHistory = mock[TransactionHistoryBase]
         val mockHistoryItem = mock[TransactionHistoryItemBase]
         val mockHistory = ArrayBuffer(mockHistoryItem)
@@ -195,7 +174,6 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
 
         val subject = new BankUI(
           new ArrayBuffer(1).addOne(mockAccount),
-          mockTransactionFactory,
           mockTransactionHistory,
           mockStatement
         )
