@@ -3,7 +3,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
 import main.client.BankUI
 import main.lib.{
-  AccountUtilsBase,
+  TransactionHistoryBase,
   TransactionHistoryItemBase,
   StatementBase,
   TransactionFactory,
@@ -175,12 +175,12 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
         val mockDeposit = mock[TransactionBase]
         var mockTransactions = ArrayBuffer(mockDeposit)
         val mockAccount = mock[AccountBase]
-        val mockAccountUtils = mock[AccountUtilsBase]
+        val mockTransactionHistory = mock[TransactionHistoryBase]
         val mockHistoryItem = mock[TransactionHistoryItemBase]
         val mockHistory = ArrayBuffer(mockHistoryItem)
         val mockStatement = mock[StatementBase]
 
-        (mockAccountUtils.getHistory _)
+        (mockTransactionHistory.getAccountHistory _)
           .expects(mockAccount)
           .returning(mockHistory)
 
@@ -196,7 +196,7 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
         val subject = new BankUI(
           new ArrayBuffer(1).addOne(mockAccount),
           TransactionFactory,
-          mockAccountUtils,
+          mockTransactionHistory,
           mockStatement
         )
 

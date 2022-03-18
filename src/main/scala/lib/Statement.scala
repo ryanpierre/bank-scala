@@ -4,18 +4,6 @@ import scala.collection.mutable.ArrayBuffer
 import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
-trait TransactionHistoryItemBase {
-  def date: Instant
-  def amount: Double
-  def balance: Double
-}
-
-class TransactionHistoryItem(
-    val date: Instant,
-    val amount: Double,
-    val balance: Double
-) extends TransactionHistoryItemBase
-
 trait StatementBase {
   def generate(history: ArrayBuffer[TransactionHistoryItemBase]): String
 }

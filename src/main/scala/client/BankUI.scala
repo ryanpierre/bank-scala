@@ -4,8 +4,8 @@ import java.time.Clock
 import scala.collection.mutable.ArrayBuffer
 import main.lib.{
   Statement,
-  AccountUtils,
-  AccountUtilsBase,
+  TransactionHistory,
+  TransactionHistoryBase,
   TransactionHistoryItemBase,
   StatementBase,
   TransactionFactory,
@@ -16,7 +16,7 @@ import main.model.{AccountBase, DEPOSIT, WITHDRAWAL}
 class BankUI(
     val accounts: ArrayBuffer[AccountBase] = new ArrayBuffer(),
     val transactionFactory: TransactionFactoryBase = TransactionFactory,
-    val accountUtils: AccountUtilsBase = AccountUtils,
+    val transactionHistory: TransactionHistoryBase = TransactionHistory,
     val statementGenerator: StatementBase = Statement
 ) {
   def deposit(canonicalAccountId: String, amount: Double): Unit = {
@@ -48,7 +48,7 @@ class BankUI(
       throw new IllegalArgumentException("Invalid account id")
     }
 
-    if (amount > account.get.transactions.map(_.amount).foldLeft(0.0)(_ + _)) {
+    if (amount > transactionHistory.getAccountBalance(account.get)) {
       throw new RuntimeException("Not enough money!")
     }
 
@@ -64,6 +64,8 @@ class BankUI(
       throw new IllegalArgumentException("Invalid account id")
     }
 
-    statementGenerator.generate(accountUtils.getHistory(account.get))
+    statementGenerator.generate(
+      transactionHistory.getAccountHistory(account.get)
+    )
   }
 }

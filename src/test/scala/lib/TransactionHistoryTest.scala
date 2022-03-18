@@ -1,13 +1,16 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import main.lib.{AccountUtils, TransactionHistoryItemBase}
+import main.lib.{TransactionHistory, TransactionHistoryItemBase}
 import main.model.{AccountBase, TransactionBase}
 import scala.collection.mutable.ArrayBuffer
 import org.scalamock.scalatest.MockFactory
 import java.time.Instant
 
-class AccountUtilsTest extends AnyWordSpec with Matchers with MockFactory {
-  "An AccountUtils" should {
+class TransactionHistoryTest
+    extends AnyWordSpec
+    with Matchers
+    with MockFactory {
+  "An TransactionHistory" should {
     "generate an account history from an account" which {
       "creates a new collection of printer compatible history items" in {
         val mockDeposit1 = mock[TransactionBase]
@@ -46,7 +49,7 @@ class AccountUtilsTest extends AnyWordSpec with Matchers with MockFactory {
           .stubs()
           .returning(mockTransactions)
 
-        val subject = AccountUtils.getHistory(
+        val subject = TransactionHistory.getAccountHistory(
           mockAccount
         )
 

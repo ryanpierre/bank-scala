@@ -1,15 +1,29 @@
 package main.lib
 
 import scala.collection.mutable.ArrayBuffer
+import java.time.Instant
 import main.model.{AccountBase, TransactionBase}
 
-trait AccountUtilsBase {
-  def getHistory(
-      account: AccountBase
-  ): ArrayBuffer[TransactionHistoryItemBase]
+trait TransactionHistoryItemBase {
+  def date: Instant
+  def amount: Double
+  def balance: Double
 }
 
-object AccountUtils extends AccountUtilsBase {
+class TransactionHistoryItem(
+    val date: Instant,
+    val amount: Double,
+    val balance: Double
+) extends TransactionHistoryItemBase
+
+trait TransactionHistoryBase {
+  def getAccountHistory(
+      account: AccountBase
+  ): ArrayBuffer[TransactionHistoryItemBase]
+  def getAccountBalance(account: AccountBase): Double
+}
+
+object TransactionHistory extends TransactionHistoryBase {
   private def toHistoryItems(
       transactions: ArrayBuffer[TransactionHistoryItemBase],
       item: TransactionBase
@@ -28,13 +42,23 @@ object AccountUtils extends AccountUtilsBase {
     return t1.date.isBefore(t2.date)
   }
 
-  def getHistory(
+  def getAccountHistory(
       account: AccountBase
   ): ArrayBuffer[TransactionHistoryItemBase] = {
     account.transactions
       .sortWith(sortHistoryByDate)
       .foldLeft(new ArrayBuffer[TransactionHistoryItemBase]())(
         toHistoryItems
+      )
+  }
+
+  def getAccountBalance(
+      account: AccountBase
+  ): Double = {
+    account.transactions
+      .sortWith(sortHistoryByDate)
+      .foldLeft(0.0)(
+        _ + _.amount
       )
   }
 }
