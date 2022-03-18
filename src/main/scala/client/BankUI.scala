@@ -6,10 +6,11 @@ import main.lib.{
   Statement,
   TransactionHistory,
   TransactionHistoryBase,
-  TransactionHistoryItemBase,
   StatementBase
 }
-import main.model.{AccountBase, Transaction, DEPOSIT, WITHDRAWAL}
+import main.model.{AccountBase}
+import scala.collection.immutable.HashMap
+import java.time.Instant
 
 class BankUI(
     val accounts: ArrayBuffer[AccountBase] = new ArrayBuffer(),
@@ -29,7 +30,10 @@ class BankUI(
       throw new IllegalArgumentException("Invalid account id")
     }
 
-    account.get.transactions += new Transaction(amount, DEPOSIT)
+    account.get.transactions += HashMap(
+      "amount" -> amount,
+      "date" -> Instant.now()
+    )
   }
 
   def withdraw(canonicalAccountId: String, amount: Double): Unit = {
@@ -49,7 +53,10 @@ class BankUI(
       throw new RuntimeException("Not enough money!")
     }
 
-    account.get.transactions += new Transaction(amount, WITHDRAWAL)
+    account.get.transactions += HashMap(
+      "amount" -> -1 * amount,
+      "date" -> Instant.now()
+    )
   }
 
   def printStatement(canonicalAccountId: String): String = {

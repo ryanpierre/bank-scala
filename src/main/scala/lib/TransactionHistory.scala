@@ -1,53 +1,58 @@
 package main.lib
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable.HashMap
 import java.time.{Instant, Clock}
-import main.model.{AccountBase, TransactionBase, TransactionType}
-
-trait TransactionHistoryItemBase {
-  def date: Instant
-  def amount: Double
-  def balance: Double
-}
-
-class TransactionHistoryItem(
-    val date: Instant,
-    val amount: Double,
-    val balance: Double
-) extends TransactionHistoryItemBase
+import main.model.{AccountBase}
 
 trait TransactionHistoryBase {
   def getAccountHistory(
       account: AccountBase
-  ): ArrayBuffer[TransactionHistoryItemBase]
+  ): ArrayBuffer[Map[String, Any]]
   def getAccountBalance(account: AccountBase): Double
 }
 
 object TransactionHistory extends TransactionHistoryBase {
   private def toHistoryItems(
-      transactions: ArrayBuffer[TransactionHistoryItemBase],
-      item: TransactionBase
-  ): ArrayBuffer[TransactionHistoryItemBase] = {
-    return transactions += new TransactionHistoryItem(
-      item.date,
-      item.amount,
-      transactions.foldLeft(item.amount)(_ + _.amount)
+      transactions: ArrayBuffer[Map[String, Any]],
+      item: Map[String, Any]
+  ): ArrayBuffer[Map[String, Any]] = {
+    if (!item.contains("date") || !item.contains("amount")) {
+      throw new IllegalArgumentException("Provided Map is invalid")
+    }
+
+    val date: Instant = item.get("date").asInstanceOf[Instant]
+    val amount: Double = item.get("amount").asInstanceOf[Double]
+
+    return transactions += HashMap(
+      "date" -> date,
+      "amount" -> amount,
+      "balance" -> transactions.foldLeft(amount)(
+        _ + _.get("amount").asInstanceOf[Double]
+      )
     )
   }
 
   private def sortHistoryByDate(
-      t1: TransactionBase,
-      t2: TransactionBase
+      t1: Map[String, Any],
+      t2: Map[String, Any]
   ): Boolean = {
-    return t1.date.isBefore(t2.date)
+    if (!t1.contains("date") || !t2.contains("date")) {
+      throw new IllegalArgumentException("Provided Map is invalid")
+    }
+
+    val date1: Instant = t1.get("date").asInstanceOf[Instant]
+    val date2: Instant = t2.get("date").asInstanceOf[Instant]
+
+    return date1.isBefore(date2)
   }
 
   def getAccountHistory(
       account: AccountBase
-  ): ArrayBuffer[TransactionHistoryItemBase] = {
+  ): ArrayBuffer[Map[String, Any]] = {
     account.transactions
       .sortWith(sortHistoryByDate)
-      .foldLeft(new ArrayBuffer[TransactionHistoryItemBase]())(
+      .foldLeft(new ArrayBuffer[Map[String, Any]]())(
         toHistoryItems
       )
   }
@@ -58,7 +63,7 @@ object TransactionHistory extends TransactionHistoryBase {
     account.transactions
       .sortWith(sortHistoryByDate)
       .foldLeft(0.0)(
-        _ + _.amount
+        _ + _.get("amount").asInstanceOf[Double]
       )
   }
 }

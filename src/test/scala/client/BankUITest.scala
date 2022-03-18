@@ -2,19 +2,10 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
 import main.client.BankUI
-import main.lib.{
-  TransactionHistoryBase,
-  TransactionHistoryItemBase,
-  StatementBase
-}
-import main.model.{
-  AccountBase,
-  TransactionBase,
-  TransactionType,
-  DEPOSIT,
-  WITHDRAWAL
-}
+import main.lib.{TransactionHistoryBase, StatementBase}
+import main.model.{AccountBase}
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable.HashMap
 import java.time.Instant
 
 class BankUITest extends AnyWordSpec with Matchers with MockFactory {
@@ -22,8 +13,8 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
     "accept a deposit" which {
       "stores a new transaction on the specified account" in {
         val mockAccount = mock[AccountBase]
-        val mockDeposit = mock[TransactionBase]
-        var mockTransactions = new ArrayBuffer[TransactionBase]()
+        val mockDeposit = mock[HashMap[String, Any]]
+        var mockTransactions = new ArrayBuffer[Map[String, Any]]()
 
         (() => mockAccount.canonicalId)
           .stubs()
@@ -73,12 +64,12 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
     "accept a withdrawal" which {
       "stores a new transaction on the specified account" in {
         val mockAccount = mock[AccountBase]
-        val mockDeposit = mock[TransactionBase]
-        val mockWithdrawal = mock[TransactionBase]
+        val mockDeposit = mock[HashMap[String, Any]]
+        val mockWithdrawal = mock[HashMap[String, Any]]
         var mockTransactions = ArrayBuffer(mockDeposit)
 
-        (() => mockDeposit.amount)
-          .expects()
+        (mockDeposit.get _)
+          .expects("amount")
           .returning(100)
 
         (() => mockAccount.canonicalId)
@@ -126,12 +117,12 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
         thrown.getMessage should equal("Invalid account id")
       }
       "throws an error if the withdrawal exceeds the balance of the account" in {
-        val mockDeposit = mock[TransactionBase]
+        val mockDeposit = mock[HashMap[String, Any]]
         var mockTransactions = ArrayBuffer(mockDeposit)
         val mockAccount = mock[AccountBase]
 
-        (() => mockDeposit.amount)
-          .expects()
+        (mockDeposit.get _)
+          .expects("amount")
           .returning(50)
 
         (() => mockAccount.canonicalId)
@@ -152,11 +143,10 @@ class BankUITest extends AnyWordSpec with Matchers with MockFactory {
     }
     "print an account statement" which {
       "generates historical balance data" in {
-        val mockDeposit = mock[TransactionBase]
+        val mockDeposit = mock[HashMap[String, Any]]
         var mockTransactions = ArrayBuffer(mockDeposit)
         val mockAccount = mock[AccountBase]
         val mockTransactionHistory = mock[TransactionHistoryBase]
-        val mockHistoryItem = mock[TransactionHistoryItemBase]
         val mockHistory = ArrayBuffer(mockHistoryItem)
         val mockStatement = mock[StatementBase]
 

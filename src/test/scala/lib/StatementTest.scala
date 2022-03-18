@@ -1,19 +1,20 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.lib.{Statement, TransactionHistoryItemBase}
-import main.model.{AccountBase, TransactionBase}
+import main.lib.{Statement}
+import main.model.{AccountBase}
 import java.time.Instant
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable.HashMap
 
 class StatementTest extends AnyWordSpec with Matchers with MockFactory {
   "A Statement" should {
     "generate a printable statement" which {
       "which takes an account history returns a string in the account statement format" in {
         val mockAccount = mock[AccountBase]
-        val mockTransation1 = mock[TransactionHistoryItemBase]
-        val mockTransation2 = mock[TransactionHistoryItemBase]
-        val mockTransation3 = mock[TransactionHistoryItemBase]
+        val mockTransation1 = mock[HashMap[String, Any]]
+        val mockTransation2 = mock[HashMap[String, Any]]
+        val mockTransation3 = mock[HashMap[String, Any]]
 
         val mockHistory = ArrayBuffer(
           mockTransation1,
@@ -21,23 +22,23 @@ class StatementTest extends AnyWordSpec with Matchers with MockFactory {
           mockTransation3
         )
 
-        (() => mockTransation1.amount).stubs().returning(100)
-        (() => mockTransation2.amount).stubs().returning(150)
-        (() => mockTransation3.amount).stubs().returning(-50)
+        (mockTransation1.get _).stubs("amount").returning(100)
+        (mockTransation2.get _).stubs("amount").returning(150)
+        (mockTransation3.get _).stubs("amount").returning(-50)
 
-        (() => mockTransation1.date)
-          .stubs()
+        (mockTransation1.get _)
+          .stubs("date")
           .returning(Instant.parse("2022-03-14T16:45:00.00Z"))
-        (() => mockTransation2.date)
-          .stubs()
+        (mockTransation2.get _)
+          .stubs("date")
           .returning(Instant.parse("2022-03-15T17:00:00.00Z"))
-        (() => mockTransation3.date)
-          .stubs()
+        (mockTransation3.get _)
+          .stubs("date")
           .returning(Instant.parse("2022-03-16T16:45:00.00Z"))
 
-        (() => mockTransation1.balance).stubs().returning(100)
-        (() => mockTransation2.balance).stubs().returning(250)
-        (() => mockTransation3.balance).stubs().returning(200)
+        (mockTransation1.get _).stubs("balance").returning(100)
+        (mockTransation2.get _).stubs("balance").returning(250)
+        (mockTransation3.get _).stubs("balance").returning(200)
 
         Statement.generate(
           mockHistory

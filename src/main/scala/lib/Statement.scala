@@ -5,7 +5,7 @@ import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
 trait StatementBase {
-  def generate(history: ArrayBuffer[TransactionHistoryItemBase]): String
+  def generate(history: ArrayBuffer[Map[String, Any]]): String
 }
 
 object Statement extends StatementBase {
@@ -21,11 +21,14 @@ object Statement extends StatementBase {
     return f"$dateHeader%-20s|$amountHeader%-12s|$balanceHeader%-12s"
   }
 
-  private def printLine(item: TransactionHistoryItemBase): String = {
-    return f"|${formatter.format(item.date)}%-20s|${item.amount}%12s|${item.balance}%12s"
+  private def printLine(item: Map[String, Any]): String = {
+    val date = item.get("date").asInstanceOf[Instant]
+    val amount = item.get("amount").asInstanceOf[Double]
+    val balance = item.get("date").asInstanceOf[Double]
+    return f"|${formatter.format(date)}%-20s|${amount}%12s|${balance}%12s"
   }
 
-  def generate(history: ArrayBuffer[TransactionHistoryItemBase]): String = {
+  def generate(history: ArrayBuffer[Map[String, Any]]): String = {
     return f"""${printHeader("Date", "Amount", "Balance")}
     ${history
       .map(printLine)
