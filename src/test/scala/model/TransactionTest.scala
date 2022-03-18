@@ -1,7 +1,7 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalamock.scalatest.MockFactory
-import main.{Transaction, TransactionFactory}
+import main.model.Transaction
 import java.time.{Clock, Instant, ZoneId}
 
 class TransactionTest extends AnyWordSpec with Matchers with MockFactory {
