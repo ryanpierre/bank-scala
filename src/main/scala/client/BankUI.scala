@@ -1,71 +1,33 @@
 package main.client
 
-import java.time.Clock
 import scala.collection.mutable.ArrayBuffer
-import main.lib.{
-  Statement,
-  TransactionHistory,
-  TransactionHistoryBase,
-  TransactionHistoryItemBase,
-  StatementBase,
-  TransactionFactory,
-  TransactionFactoryBase
+import main.model._
+import main.lib.TransactionFactory
+
+trait IBankUI {
+  val accounts: ArrayBuffer[Account]
+  def createAccount(): Unit
+  def deposit(
+      accountId: Int,
+      amount: Double,
+      transactionFactory: TransactionFactory
+  ): Unit
+  def withdraw(accountId: Int, amount: Double): Unit
+  def print(accountId: Int): String
 }
-import main.model.{AccountBase, DEPOSIT, WITHDRAWAL}
 
-class BankUI(
-    val accounts: ArrayBuffer[AccountBase] = new ArrayBuffer(),
-    val transactionFactory: TransactionFactoryBase = TransactionFactory,
-    val transactionHistory: TransactionHistoryBase = TransactionHistory,
-    val statementGenerator: StatementBase = Statement
-) {
-  def deposit(canonicalAccountId: String, amount: Double): Unit = {
-    val account =
-      accounts
-        .find(_.canonicalId == canonicalAccountId)
-
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Must enter an amount greater than 0")
+class BankUI(val accounts: ArrayBuffer[Account]) extends IBankUI {
+  def createAccount() = {}
+  def deposit(
+      accountId: Int,
+      amount: Double,
+      transactionFactory: TransactionFactory
+  ) = {
+    accounts.find(_.id == accountId) match {
+      case None    => throw new RuntimeException("Account did not exist")
+      case Some(a) => a.transactions.addOne(transactionFactory.create(amount))
     }
-
-    if (account.isEmpty) {
-      throw new IllegalArgumentException("Invalid account id")
-    }
-
-    account.get.transactions += transactionFactory.create(amount, DEPOSIT)
   }
-
-  def withdraw(canonicalAccountId: String, amount: Double): Unit = {
-    val account =
-      accounts
-        .find(_.canonicalId == canonicalAccountId)
-
-    if (amount <= 0) {
-      throw new IllegalArgumentException("Must enter an amount greater than 0")
-    }
-
-    if (account.isEmpty) {
-      throw new IllegalArgumentException("Invalid account id")
-    }
-
-    if (amount > transactionHistory.getAccountBalance(account.get)) {
-      throw new RuntimeException("Not enough money!")
-    }
-
-    account.get.transactions += transactionFactory.create(amount, WITHDRAWAL)
-  }
-
-  def printStatement(canonicalAccountId: String): String = {
-    val account =
-      accounts
-        .find(_.canonicalId == canonicalAccountId)
-
-    if (account.isEmpty) {
-      throw new IllegalArgumentException("Invalid account id")
-    }
-
-    statementGenerator.generate(
-      transactionHistory.getAccountHistory(account.get)
-    )
-  }
+  def withdraw(accountId: Int, amount: Double) = {}
+  def print(accountId: Int) = { "" }
 }
